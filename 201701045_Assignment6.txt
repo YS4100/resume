@@ -1,0 +1,287 @@
+//Filename : 201701045_Assignment6.cpp
+//Author : Yashvi Shah
+//SID : 201701045
+//Assignment number : 6
+//Description : Stack
+//Last changed : 07-03-2018
+
+#include<iostream>
+#include<stdlib.h>
+using namespace std;
+
+// .....................................................................................................
+
+template <typename E>
+class List
+{
+    void operator = (const List&) {}
+    List(const List&) {}
+
+    public:
+        //constructors and destructors
+        List() {}
+        virtual ~List() {}
+
+        //Return the number of elements in the List
+        virtual int NumberOfElements() const = 0;
+
+       //insert a data in the end of the List
+        virtual void append(const E& data) = 0;
+
+       //delete a data at the current Location
+        virtual E remove() = 0;
+
+       //Return the data of current element
+        virtual const E& getData(int) const = 0;
+
+       //clear all the data from the List
+        virtual void clear() = 0;
+
+        };
+
+// .......................................................................................................
+
+template <typename E>
+class arrayList: public List<E>
+{
+    int arraySize;          // maximum size of the list
+    int currentSize;        // number of data elements stored
+    int currentLocation;    // location pointer of the list
+    E* dataArray;           // Array for storing the data
+
+    public:
+        //constructors and destructors
+        arrayList(int size)
+        {
+            arraySize = size;
+            currentSize = currentLocation = 0;
+            dataArray = new E[arraySize];
+        }
+        ~arrayList()
+        {
+            delete [] dataArray;
+        }
+
+
+        int NumberOfElements() const
+        {
+        return currentSize;
+        }
+
+
+        void append(const E& data)
+         {
+         dataArray[currentSize]=data;
+         currentSize++;
+         }
+
+
+         E remove()
+        {
+        E x=dataArray[currentSize-1];
+        currentSize--;
+        return x;
+        }
+
+
+        const E& getData(int currentLocation) const
+        {
+        return dataArray[currentLocation-1];
+        }
+
+        void clear()
+        {
+         delete [] dataArray;
+         currentSize=0;
+         currentLocation=0;
+        }
+
+
+        void display()
+        {
+        int i;
+        if(currentSize==0)
+        {
+        cout<<"Stack is empty"<<endl;
+        }
+        else
+        {
+        cout<<"The current stack is :"<<endl;
+        for(i=currentSize-1;i>=0;i--)
+        {
+        cout<<dataArray[i]<<endl;
+        }
+        }
+        }
+
+        };
+
+// .....................................................................................................
+
+template <typename E>
+class Stack
+{
+    void operator = (const Stack&) {}
+    Stack(const Stack&) {}
+
+    public:
+        //constructors and destructors
+        Stack() {}
+        virtual ~Stack() {}
+
+        //Return the length of the stack
+        virtual int length() const = 0;
+
+        //Add element in the stack
+        virtual void push(const E& element) = 0;
+
+        //clear the current data element from stack
+        virtual E pop() = 0;
+
+        //Return a copy of the current element
+        virtual const E& currentElement() const= 0;
+
+        // Remove all the elements from the stack
+        // and free the occupied memory without causing
+        // memory leak
+        virtual void clearStack() = 0;
+
+};
+
+//.......................................................................................................
+
+template <typename E>
+class StackArrayList: public Stack<E>
+{
+    int stacksize; // size of the stack
+    int currentLocation; // location pointer keeping track of
+                         // current element
+    arrayList<E>* StackArray; // Array for storing the data.
+StackArray is an object of class arrayList.
+
+    public:
+        //constructors and destructors
+        StackArrayList(int size)
+        {
+            stacksize = size;
+            StackArray = new arrayList<E>(size);
+            currentLocation = 0;
+        }
+        ~StackArrayList()
+        {
+            delete StackArray;
+        }
+
+
+int length() const //Return the length of the stack
+{
+return StackArray->NumberOfElements();
+}
+
+
+void push(const E& element)  //Add element in the stack
+{
+currentLocation++;
+StackArray->append(element);
+}
+
+
+E pop()  //clear the current data element from stack
+{
+E a;
+currentLocation--;
+a=StackArray->remove();
+return a;
+}
+
+
+const E& currentElement() const  //Return a copy of the current element
+{
+return StackArray->getData(currentLocation);
+}
+
+
+void clearStack()  // Remove all the elements from the stack and free
+the occupied memory without causing memory leak
+{
+StackArray->clear();
+currentLocation=0;
+}
+
+void display()  //display the current stack
+{
+int i;
+StackArray->display();
+}
+
+};
+
+//......................................................................................................
+
+ int main()
+  {
+  cout<<"Enter the size of Stack : ";
+  int size,x;
+  cin>>size;
+  StackArrayList<int> a(size);
+  cout<<"1 - Return the length of the stack"<<endl;
+  cout<<"2 - Push an element in the stack"<<endl;
+  cout<<"3 - Pop an element from stack"<<endl;
+  cout<<"4 - Return the current element"<<endl;
+  cout<<"5 - Clear the stack"<<endl;
+  cout<<"6 - Display the stack"<<endl;
+  cout<<"7 - Exit"<<endl;
+
+
+
+  while(1)
+  {
+  int c;
+   cout<<"Enter the choice number : "<<endl;
+   cin>>c;
+  switch(c)
+  {
+  case 1: cout<<"The length of stack is "<<a.length()<<endl;
+          break;
+  case 2: if(a.length()<size)
+          {
+          cout<<"Enter the element to be added in the stack : ";
+          cin>>x;
+          a.push(x);
+          }
+          else
+          {
+          cout<<"The stack is full"<<endl;
+          }
+          break;
+  case 3: if(a.length()!=0)
+          {
+          cout<<"The removed element is "<<a.pop()<<endl;
+          }
+          else
+          {
+          cout<<"The stack is empty."<<endl;
+          }
+          break;
+  case 4: if(a.length()!=0)
+          {
+          cout<<"The current element is "<<a.currentElement()<<endl;
+          }
+          else{cout<<"The stack is empty"<<endl;
+          }
+          break;
+  case 5: a.clearStack();
+          cout<<"The stack is empty"<<endl;
+          break;
+  case 6: a.display();
+          break;
+  case 7: exit(1);
+          break;
+  default : cout<<"Invalid Input"<<endl;
+            break;
+  }
+
+  }
+
+  return 0;
+  }
